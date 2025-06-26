@@ -1,17 +1,41 @@
-from server.models import db, Restaurant, Pizza, RestaurantPizza
-from server.app import create_app
+from server.app import app, db
+from server.models import Restaurant, Pizza, RestaurantPizza
 
-app = create_app()
+def seed_database():
+    with app.app_context():
+        print("Resetting database...")
+        db.drop_all()
+        db.create_all()
+        
+        print("Creating restaurants...")
+        restaurants = [
+            Restaurant(name="Pizza Inn", address="123 Luthuli Street"),
+            Restaurant(name="Swahili Dishes", address="456 Mombasa Ave"),
+            Restaurant(name="Big Square ", address="Mombasa Road")
+        ]
+        
+        print("Creating pizzas...")
+        pizzas = [
+            Pizza(name="Margherita chicken", ingredients="Tomato sauce, Mozzarella, Basil"),
+            Pizza(name="Pepperoni beef", ingredients="Tomato sauce, Mozzarella, Pepperoni"),
+            Pizza(name="Vegetarian", ingredients="Tomato sauce, Mozzarella, Bell peppers, Mushrooms, Olives")
+        ]
+        
+        db.session.add_all(restaurants + pizzas)
+        db.session.commit()
+        
+        print("Creating restaurant pizzas...")
+        restaurant_pizzas = [
+            RestaurantPizza(price=1000, restaurant_id=1, pizza_id=1),
+            RestaurantPizza(price=1200, restaurant_id=1, pizza_id=2),
+            RestaurantPizza(price=1500, restaurant_id=2, pizza_id=3),
+            RestaurantPizza(price=800, restaurant_id=3, pizza_id=1)
+        ]
+        
+        db.session.add_all(restaurant_pizzas)
+        db.session.commit()
+        
+        print("Database seeded successfully!")
 
-with app.app_context():
-    db.drop_all()
-    db.create_all()
-
-    r1 = Restaurant(name="Luigi's", address="123 Pasta Street")
-    r2 = Restaurant(name="Mario's", address="456 Mushroom Ave")
-    db.session.add_all([r1, r2])
-
-    p1 = Pizza(name="Margherita", ingredients="Tomato, Mozzarella, Basil")
-    p2 = Pizza(name="Pepperoni", ingredients="Tomato, Cheese, Pepperoni")
-    db.session.add_all([p1, p2])
-    db.session.commit()
+if __name__ == '__main__':
+    seed_database()

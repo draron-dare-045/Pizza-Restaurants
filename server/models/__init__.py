@@ -1,3 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from .restaurant import Restaurant
+from .pizza import Pizza
+from .restaurant_pizza import RestaurantPizza
 
-db = SQLAlchemy()
+__all__ = ['Restaurant', 'Pizza', 'RestaurantPizza']

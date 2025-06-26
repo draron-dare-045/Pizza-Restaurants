@@ -1,11 +1,14 @@
 from flask import Blueprint, jsonify
-from server.models.pizza import Pizza
-from server.models import db
+from ..models import Pizza
+from ..app import db
 
-pizza_bp = Blueprint('pizza_bp', __name__)
+pizza_controller = Blueprint('pizzas', __name__)
 
-@pizza_bp.route('/pizzas', methods=['GET'])
+@pizza_controller.route('/pizzas', methods=['GET']) #method to get all pizzas or get by id 
 def get_pizzas():
     pizzas = Pizza.query.all()
-    response = [pizza.to_dict() for pizza in pizzas]
-    return jsonify(response), 200
+    return jsonify([{
+        'id': p.id,
+        'name': p.name,
+        'ingredients': p.ingredients
+    } for p in pizzas])
